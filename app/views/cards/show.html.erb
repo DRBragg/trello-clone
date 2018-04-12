@@ -1,0 +1,23 @@
+<div class="page-header">
+  <%= link_to cards_path, class: 'btn btn-default' do %>
+    <span class="glyphicon glyphicon-list-alt"></span>
+    All Cards
+  <% end %>
+  <%= link_to edit_card_path(@card), class: 'btn btn-primary' do %>
+    <span class="glyphicon glyphicon-pencil"></span>
+    Edit
+  <% end %>
+  <h1>Show card</h1>
+</div>
+
+<dl class="dl-horizontal">
+  <dt>List:</dt>
+  <dd><%= @card.list %></dd>
+
+  <dt>Name:</dt>
+  <dd><%= @card.name %></dd>
+
+  <dt>Position:</dt>
+  <dd><%= @card.position %></dd>
+
+</dl>
