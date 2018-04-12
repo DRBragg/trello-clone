@@ -13,31 +13,4 @@
   </div>
 </div>
 
-<div class="table-responsive">
-  <table class="table table-striped table-bordered table-hover">
-    <thead>
-      <tr>
-    
-        <th>Name</th>
-    
-
-            <th>Position</th>
-            
-      </tr>
-    </thead>
-
-    <tbody>
-      <% @lists.each do |list| %>
-        <%= content_tag :tr, id: dom_id(list), class: dom_class(list) do %>
-          
-            <td><%= link_to list.name, list %></td>
-          
-
-                      <td><%= list.position %></td>
-          
-          
-        <% end %>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+<%= tag.div id: :boards, data: { lists: @lists.to_json(include: :cards) } %>
