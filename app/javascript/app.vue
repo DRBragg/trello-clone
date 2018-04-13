@@ -1,82 +1,28 @@
 <template>
-  <draggable v-model="lists" :options="{group: 'lists'}" @end="listMoved" class="row dragArea">
-    <div v-for="(list, index) in lists" class="col-3">
-      <h6>{{ list.name }}</h6>
-      <hr />
-
-      <draggable v-model="list.cards" :options="{group: 'cards'}" @change="cardMoved" class="dragArea">
-        <div v-for="(card, index) in list.cards" class="card card-body mb-3">
-          {{ card.name }}
-        </div>
-      </draggable>
-
-      <div class="card card-body">
-        <textarea v-model="messages[list.id]" class="form-control"></textarea>
-        <button @click="submitMessages(list.id)" class="btn btn-primary">Add</button>
-      </div>
-    </div>
+  <draggable v-model="lists" :options="{group: 'lists'}" @end="listMoved" class="board dragArea">
+    <list v-for="(list, index) in lists" :list="list"></list>
   </draggable>
 </template>
 
 <script>
 import draggable from 'vuedraggable'
+import list from 'components/list'
 
 export default {
   props: ["original_lists"],
-  components: { draggable },
+  components: { draggable, list },
   data: function () {
     return {
-      messages: {},
       lists: this.original_lists
     }
   },
   methods: {
-    submitMessages (list_id) {
-      var data = new FormData
-      data.append("card[list_id]", list_id)
-      data.append("card[name]", this.messages[list_id])
-
-      Rails.ajax({
-        url: "/cards",
-        type: "POST",
-        data: data,
-        dataType: "json",
-        success: (data) => {
-          const index = this.lists.findIndex(item => item.id == list_id);
-          this.lists[index].cards.push(data);
-          this.messages[list_id] = undefined;
-        }
-      })
-    },
     listMoved (event) {
       var data = new FormData
       data.append("list[position]", event.newIndex + 1)
 
       Rails.ajax({
         url: `lists/${this.lists[event.newIndex].id}/move`,
-        type: "PATCH",
-        data: data,
-        dataType: "json"
-      })
-    },
-    cardMoved (event) {
-      const evt = event.added || event.moved
-
-      if (evt == undefined) { return }
-
-      const element = evt.element
-      const list_index = this.lists.findIndex((list) => {
-        return list.cards.find((card) => {
-          return card.id === element.id
-        })
-      })
-
-      var data = new FormData
-      data.append("card[list_id]", this.lists[list_index].id)
-      data.append("card[position]", evt.newIndex + 1)
-
-      Rails.ajax({
-        url: `/cards/${element.id}/move`,
         type: "PATCH",
         data: data,
         dataType: "json"
@@ -89,5 +35,10 @@ export default {
 <style scoped>
 .dragArea {
   min-height: 20px;
+}
+
+.board {
+  overflow-x: scroll;
+  white-space: nowrap;
 }
 </style>
