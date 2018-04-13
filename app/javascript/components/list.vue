@@ -10,7 +10,7 @@
     <a v-if="!editing" @click="startEditing">Add a Card</a>
     <div v-else class="mb-1">
       <textarea v-model="message" ref="message" class="form-control mb-1"></textarea>
-      <button @click="submitMessage(list.id)" class="btn btn-primary">Add</button>
+      <button @click="createCard(list.id)" class="btn btn-primary">Add</button>
       <a @click="editing=false">Cancel</a>
     </div>
   </div>
@@ -34,7 +34,7 @@ export default {
       this.editing = true
       this.$nextTick(() => { this.$refs.message.focus() })
     },
-    submitMessage () {
+    createCard () {
       var data = new FormData
       data.append("card[list_id]", this.list.id)
       data.append("card[name]", this.message)
@@ -45,8 +45,6 @@ export default {
         data: data,
         dataType: "json",
         success: (data) => {
-          const index = window.store.lists.findIndex(item => item.id == this.list.id)
-          window.store.lists[index].cards.push(data)
           this.message = ""
           this.$nextTick(() => { this.$refs.message.focus() })
         }
